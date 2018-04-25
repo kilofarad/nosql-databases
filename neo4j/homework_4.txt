@@ -1,7 +1,62 @@
 // The scenario you have used for your schema is:
-
+// The relationships between characters on season 5/6 of Degrassi: The Next Generation
 
 // This is an example. Your own commands should *not* be commented out so we can pipe the file into the cypher-shell.
 // If you'd like to test your commands, you can run 'cat homework_4.txt | cypher-shell -u neo4j -p test' from
 // the vagrant box command line. Make sure neo4j is running first.
-// CREATE (a:person { name: 't' });
+MATCH (n)
+DETACH DELETE n;
+
+CREATE (a:Person { name: 'Alex'});
+CREATE (a:Person { name: 'Jay'}); 
+CREATE (a:Person { name: 'Paige'});
+CREATE (a:Person { name: 'Hazel'});
+CREATE (a:Person { name: 'Manny'});
+CREATE (a:Person { name: 'Peter'}); 
+CREATE (a:Person { name: 'Emma'});  
+CREATE (a:Person { name: 'Spike'});  
+CREATE (a:Person { name: 'JT'});  
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Paige' AND b.name = 'Alex'
+CREATE (a)-[s:ROMANTIC_WITH {_of: 'girlfriend'}]->(b)
+CREATE (b)-[r:ROMANTIC_WITH {_of: 'girlfriend'}]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Jay' AND b.name = 'Alex'
+CREATE (a)-[r:ROMANTIC_WITH {_of: 'ex-boyfriend'}]->(b)
+CREATE (b)-[s:ROMANTIC_WITH {_of: 'ex-girlfriend'}]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Peter' AND b.name = 'Emma'
+CREATE (a)-[r:ROMANTIC_WITH {_of: 'boyfriend'}]->(b)
+CREATE (b)-[s:ROMANTIC_WITH {_of: 'girlfriend'}]->(a);
+
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Emma' AND b.name = 'Spike'
+CREATE (a)-[r:DAUGHTER_OF]->(b)
+CREATE (b)-[s:MOTHER_OF]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Emma' AND b.name = 'Manny'
+CREATE (a)-[r:FRIEND_OF]->(b)
+CREATE (b)-[s:FRIEND_OF]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Hazel' AND b.name = 'Paige'
+CREATE (a)-[r:FRIEND_OF]->(b)
+CREATE (b)-[s:FRIEND_OF]->(a);
+
+MATCH (a:Person),(b:Person)
+WHERE a.name = 'Paige' AND b.name = 'Manny'
+CREATE (a)-[r:ENEMY_OF]->(b)
+CREATE (b)-[s:ENEMY_OF]->(a);
+
+//Paige's relationships
+MATCH (a:Person {name: 'Paige'})-[r]->(Person)
+RETURN type(r), Person.name;
+
+//Romantic relationship overview
+MATCH (a:Person)-[r:ROMANTIC_WITH]->(b:Person)
+RETURN a.name, r._of, b.name;
